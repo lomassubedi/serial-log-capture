@@ -8,6 +8,7 @@ import websockets
 
 # Define global variables
 BAUD_RATE = 115200
+LOG_FILE_PATH = "serial_data.txt"
 
 
 def find_serial_port():
@@ -29,14 +30,18 @@ async def read_serial_and_send_data(websocket, path):
         # Open serial port
         ser = serial.Serial(port, BAUD_RATE)
 
-        while True:
-            # Read data from serial port
-            data = ser.readline().decode()
-            if data:
-                # Send data to WebSocket clients
-                await websocket.send(data)
-                print("Data sent to client:", data)  # Debug message
-            await asyncio.sleep(0.01)  # Adjust sleep time as needed
+        # Open log file in append mode
+        with open(LOG_FILE_PATH, 'a') as log_file:
+            while True:
+                # Read data from serial port
+                data = ser.readline().decode()
+                if data:
+                    # Send data to WebSocket clients
+                    await websocket.send(data)
+                    print("Data sent to client:", data)  # Debug message
+                    # Log data to file
+                    log_file.write(data + '\n')
+                await asyncio.sleep(0.01)  # Adjust sleep time as needed
     except Exception as e:
         print(f"Error reading from serial port: {e}. Restarting...")
         await asyncio.sleep(1)
