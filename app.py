@@ -1,10 +1,13 @@
 import serial
 import time
 from serial.tools.list_ports import comports
+import socketserver
+import threading
+import asyncio
+import websockets
 
 # Define global variables
 BAUD_RATE = 115200
-FILE_PATH = "log_file.log"
 
 
 def find_serial_port():
@@ -20,27 +23,30 @@ def find_serial_port():
     raise RuntimeError("No suitable serial port found")
 
 
-def read_serial_and_log():
-    global FILE_PATH
+async def read_serial_and_send_data(websocket, path):
     port = find_serial_port()
     try:
         # Open serial port
         ser = serial.Serial(port, BAUD_RATE)
 
-        # Open file in append mode
-        with open(FILE_PATH, 'a') as file:
-            while True:
-                # Read data from serial port
-                data = ser.readline().decode().strip()
-                if data:
-                    # Append data to file
-                    file.write(data + '\n')
-                    print(data)  # Print data to console
+        while True:
+            # Read data from serial port
+            data = ser.readline().decode()
+            if data:
+                # Send data to WebSocket clients
+                await websocket.send(data)
+                print("Data sent to client:", data)  # Debug message
+            await asyncio.sleep(0.01)  # Adjust sleep time as needed
     except Exception as e:
-        print(f"Error: {e}. Restarting...")
-        time.sleep(1)
+        print(f"Error reading from serial port: {e}. Restarting...")
+        await asyncio.sleep(1)
+
+
+async def run_websocket_server():
+    async with websockets.serve(read_serial_and_send_data, "localhost", 8765):
+        print("WebSocket server started.")
+        await asyncio.Future()  # Keep server running indefinitely
 
 
 if __name__ == "__main__":
-    while True:
-        read_serial_and_log()
+    asyncio.run(run_websocket_server())
