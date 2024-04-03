@@ -1,14 +1,34 @@
-import argparse
 import serial
 import time
+from serial.tools.list_ports import comports
 
-def read_serial_and_log(port, baud_rate, file_path):
+# Define global variables
+BAUD_RATE = 115200
+FILE_PATH = "log_file.log"
+
+
+def find_serial_port():
+    # Get a list of available serial ports
+    ports = comports()
+
+    # Iterate through the list of ports and select the first one
+    for port in ports:
+        if port.device.startswith('/dev/ttyUSB'):
+            return port.device
+
+    # If no suitable port is found
+    raise RuntimeError("No suitable serial port found")
+
+
+def read_serial_and_log():
+    global FILE_PATH
+    port = find_serial_port()
     try:
         # Open serial port
-        ser = serial.Serial(port, baud_rate)
+        ser = serial.Serial(port, BAUD_RATE)
 
         # Open file in append mode
-        with open(file_path, 'a') as file:
+        with open(FILE_PATH, 'a') as file:
             while True:
                 # Read data from serial port
                 data = ser.readline().decode().strip()
@@ -20,13 +40,7 @@ def read_serial_and_log(port, baud_rate, file_path):
         print(f"Error: {e}. Restarting...")
         time.sleep(1)
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Read data from serial port and log to file.')
-    parser.add_argument('--port', default='/dev/ttyUSB0', help='Serial port')
-    parser.add_argument('--baud_rate', type=int, default=115200, help='Baud rate')
-    parser.add_argument('file_path', help='Path to log file')
-
-    args = parser.parse_args()
-
     while True:
-        read_serial_and_log(args.port, args.baud_rate, args.file_path)
+        read_serial_and_log()
