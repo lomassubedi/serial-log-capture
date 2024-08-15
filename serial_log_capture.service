@@ -1,0 +1,14 @@
+[Unit]
+Description=Serial Log Capture
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/nds-pi/serial-log-capture/app.py
+Restart=always
+RestartSec=5
+User=yourusername
+WorkingDirectory=/home/nds-pi/serial-log-capture
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
