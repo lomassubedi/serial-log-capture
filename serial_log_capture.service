@@ -6,7 +6,7 @@ After=network.target
 ExecStart=/usr/bin/python3 /home/nds-pi/serial-log-capture/app.py
 Restart=always
 RestartSec=5
-User=yourusername
+User=<yourusername>
 WorkingDirectory=/home/nds-pi/serial-log-capture
 Environment=PYTHONUNBUFFERED=1
 

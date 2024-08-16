@@ -2,19 +2,29 @@
 
 Python script to capture serial log and log in a file
 
+### Find Raspberry Pi in your network using nmap
+
+```bash
+sudo nmap -sT --min-parallelism 100 -O 192.168.1.0/24
+```
+
 ### Enable and Start the Service
 
-1. Reload the systemd manager configuration:
-
+1. Copy service file to systemd
+   ```bash
+   sudo cp serial_log_capture.service /etc/systemd/system
+   ```
+2. Reload the systemd manager configuration:
    ```bash
    sudo systemctl daemon-reload
    ```
-2. Enable the service to start on boot:
+
+3. Enable the service to start on boot:
 
    ```bash
    sudo systemctl enable serial_log_capture.service
    ```
-3. Start the service immediately:
+4. Start the service immediately:
 
    ```bash
    sudo systemctl start serial_log_capture.service
