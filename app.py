@@ -17,7 +17,7 @@ def find_serial_port():
 
     # Iterate through the list of ports and select the first one
     for port in ports:
-        if port.device.startswith('/dev/ttyUSB'):
+        if port.device.startswith('/dev/ttyUSB') or port.device.startswith('/dev/ttyACM'):
             return port.device
 
     # If no suitable port is found
