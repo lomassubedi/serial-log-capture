@@ -35,13 +35,17 @@ def read_serial_and_send_data():
         with open(LOG_FILE_PATH, 'a') as log_file:
             while True:
                 # Read data from serial port
-                data = ser.readline().decode()
-                if data:
-                    # Send data to WebSocket clients
-                    # await websocket.send(data)
-                    print("Data saved to file:", data)  # Debug message
-                    # Log data to file
-                    log_file.write(data + '\n')
+                try:
+                    data = ser.readline().decode()
+                    if data:
+                        # Send data to WebSocket clients
+                        # await websocket.send(data)
+                        print("Data saved to file:", data)  # Debug message
+                        # Log data to file
+                        log_file.write(data + '\n')
+                except:
+                    pass
+                finally:
                     time.sleep(0.01)  # Adjust sleep time as needed
     except Exception as e:
         print(f"Error reading from serial port: {e}. Restarting...")
