@@ -25,6 +25,11 @@
             })
             socketio.on('message', (msg) => {
                 log_area.value += msg + '\n'
+                log_area.scrollTop = log_area.scrollHeight;
+            })
+            socketio.on("serial_data", (msg) => {
+                log_area.value += msg.data + '\n'
+                log_area.scrollTop = log_area.scrollHeight;
             })
 
         })

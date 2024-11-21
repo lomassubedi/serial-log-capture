@@ -1,0 +1,14 @@
+[Unit]
+Description=Flask Application
+After=network.target
+
+[Service]
+User=your_user       # Replace with the user running the app
+Group=your_group     # Replace with the group (usually the same as the user)
+WorkingDirectory=/path/to/your/flask/app
+ExecStart=/path/to/your/venv/bin/python app.py
+Restart=always       # Automatically restart on failure
+Environment=FLASK_ENV=production
+
+[Install]
+WantedBy=multi-user.target
