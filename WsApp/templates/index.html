@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"
+        integrity="sha512-8BHxHDLsOHx+flIrQ0DrZcea7MkHqRU5GbTHmbdzMRnAaoCIkZ97PqZcXJkKZckMMhqfoeaJE+DNUVuyoQsO3Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const socketio = io()
+            var log_area = document.getElementById("log-area")
+
+            socketio.on('connect', () => {
+                console.log("Connected...")
+                socketio.emit('message', "Hello, Server")
+            })
+            socketio.on('error', (error) => {
+                console.log("Something went wrong\n", error)
+            })
+            socketio.on('disconnect', () => {
+                console.log("Disconnected from server")
+            })
+            socketio.on('message', (msg) => {
+                log_area.value += msg + '\n'
+            })
+
+        })
+    </script>
+    <style>
+        
+        body {
+            margin: 0;
+            padding: 5px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: calc(95vh - 50px); /* Full height minus h1's height */
+            margin: 0;
+            margin-top: 5px;
+            padding: 10px;
+            resize: none;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+            border-width: 5px;
+        }
+    </style>
+    <title>Serial Log Capture</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Serial Log Capture</h1>
+        <textarea name="log" id="log-area" placeholder="" readonly></textarea>
+    </div>
+
+</body>
+
+</html>
